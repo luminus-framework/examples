@@ -1,0 +1,41 @@
+<!--
+ ! Excerpted from "Web Development with Clojure, Second Edition",
+ ! published by The Pragmatic Bookshelf.
+ ! Copyrights apply to this code. It may not be used to create training material,
+ ! courses, books, articles, and the like. Contact us if you are in doubt.
+ ! We make no guarantees that this code is fit for any purpose.
+ ! Visit http://www.pragmaticprogrammer.com/titles/dswdcloj2 for more book information.
+-->
+<html>
+  <head>
+      <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Welcome to swagger-service</title>
+  </head>
+  <body>
+    <div id="navbar"></div>
+    <div id="app">
+      <div class="container">
+        <div class="three-quarters-loader">Loading…</div>
+        <p>If you're seeing this message, that means you haven't yet compiled your ClojureScript!</p>
+        <p>Please run <code>lein figwheel</code> to start the ClojureScript compiler and reload the page.</p>
+        <p>See <a href="http://www.luminusweb.net/docs/clojurescript.md">ClojureScript</a> documentation for further details.</p>
+      </div>
+    </div>
+
+    <!-- scripts and styles -->
+    {% style "/assets/bootstrap/css/bootstrap.min.css" %}
+    {% style "/assets/font-awesome/css/font-awesome.min.css" %}
+    {% style "/css/screen.css" %}
+
+    <script type="text/javascript">
+        var context = "{{servlet-context}}";
+        var csrfToken = "{{csrf-token}}";
+    </script>
+    {% script "/js/app.js" %}
+  </body>
+</html>
+
+
+
+

@@ -1,0 +1,34 @@
+<html>
+  <head>
+      <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>Welcome to multi-client-ws</title>
+  </head>
+  <body>
+    <div id="navbar"></div>
+    <div id="app">
+      <p>If you're seeing this message, that means you haven't yet compiled your ClojureScript!</p>
+      <p>Please run <code>lein figwheel</code> to start the ClojureScript compiler and reload the page.</p>
+      <p>See <a href="http://www.luminusweb.net/docs/clojurescript.md">ClojureScript</a> documentation for further details.</p>
+    </div>
+
+    <!-- scripts and styles -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    {% style "/css/screen.css" %}
+
+    <script type="text/javascript">
+        var context = "{{servlet-context}}";
+    </script>
+    {% if dev %}
+      {% script "/js/out/goog/base.js" %}
+      {% script "/js/app.js" %}
+      <script type="text/javascript">goog.require("multi_client_ws.app");</script>
+    {% else %}
+      {% script "/js/app.js" %}
+    {% endif %}
+  </body>
+</html>
+
+
+
+
