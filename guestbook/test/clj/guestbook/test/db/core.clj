@@ -18,11 +18,17 @@
 (deftest test-message
   (jdbc/with-db-transaction [t-conn *db*]
     (jdbc/db-set-rollback-only! t-conn)
-    (let [message {:name "test"
-                   :message "test"
-                   :timestamp (java.util.Date.)}]
-      (is (= 1 (db/save-message! t-conn message)))
-      (let [result (db/get-messages t-conn {})]
-        (is (= 1 (count result)))
-        (is (= message (dissoc (first result) :id))))))
-  (is (empty? (db/get-messages))))
+    (let [timestamp (org.joda.time.DateTime. org.joda.time.DateTimeZone/UTC)]
+      (is (= 1 (db/save-message!
+                t-conn
+                {:name "Bob"
+                 :message "Hello, World"
+                 :timestamp timestamp}
+                {:connection t-conn})))
+      (is (=
+           {:name "Bob"
+            :message "Hello, World"
+            :timestamp timestamp}
+           (-> (db/get-messages t-conn {})
+               (first)
+               (select-keys [:name :message :timestamp])))))))
