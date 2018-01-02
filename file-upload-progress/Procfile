@@ -1,0 +1,1 @@
+web: java -cp target/uberjar/file-upload-progress.jar clojure.main -m file-upload-progress.core
