@@ -15,7 +15,6 @@
                  [selmer "1.11.7"]
                  [markdown-clj "1.0.2"]
                  [luminus/config "0.8"]
-                 [ring-middleware-format "0.7.2"]
                  [metosin/ring-http-response "0.9.0"]
                  [metosin/muuntaja "0.5.0"]
                  [bouncer "1.0.1"]
@@ -85,7 +84,8 @@
              :resource-paths ["env/prod/resources"]}
    :dev           [:project/dev :profiles/dev]
    :test          [:project/test :profiles/test]
-   :project/dev  {:dependencies [[prone "1.5.0"]
+   :project/dev  {:dependencies [[binaryage/devtools "0.9.9"]
+                                 [prone "1.5.0"]
                                  [ring/ring-mock "0.3.2"]
                                  [ring/ring-devel "1.6.3"]
                                  [pjstadig/humane-test-output "0.8.3"]
