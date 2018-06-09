@@ -1,0 +1,1 @@
+web: java -cp target/uberjar/guestbook-datomic.jar clojure.main -m guestbook-datomic.core
