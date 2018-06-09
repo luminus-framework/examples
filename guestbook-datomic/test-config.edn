@@ -6,5 +6,5 @@
  ; set your test database connection URL here
  ; :database-url "datomic:free://localhost:4334/guestbook_datomic_test"
  ; Don't forget you can also use the datomic mem db which can be useful when developing
- ; :database-url "datomic:mem://guestbook_datomic_test"
+ :database-url "datomic:mem://guestbook_datomic_test"
 }
