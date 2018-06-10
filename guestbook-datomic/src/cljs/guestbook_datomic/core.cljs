@@ -8,7 +8,8 @@
             [ajax.core :refer [GET POST]]
             [guestbook-datomic.ajax :refer [load-interceptors!]]
             [guestbook-datomic.events]
-            [secretary.core :as secretary])
+            [secretary.core :as secretary]
+            [guestbook-datomic.validation :refer [validate-message]])
   (:import goog.History))
 
 (defn nav-link [uri title page]
@@ -36,14 +37,58 @@
     [:div.col-md-12
      [:img {:src "/img/warning_clojure.png"}]]]])
 
+(defn errors-component [errors id]
+  (when-let [error (id @errors)]
+    [:div.alert.alert-danger (clojure.string/join error)]))
+
+(defn message-form []
+  (let [fields (r/atom {})
+        errors (r/atom nil)]
+    (fn []
+      [:div.content
+       [:div.form-group
+        [errors-component errors :name]
+        [:p "Name:"
+         [:input.form-control
+          {:type      :text
+           :name      :name
+           :on-change #(swap! fields assoc :name (-> % .-target .-value))
+           :value     (:name @fields)}]]
+        [errors-component errors :message]
+        [:p "Message:"
+         [:textarea.form-control
+          {:rows      4
+           :cols      50
+           :name      :message
+           :value     (:message @fields)
+           :on-change #(swap! fields assoc :message (-> % .-target .-value))}]]
+        [:input.btn.btn-primary
+         {:type     :submit
+          :on-click #(if-not (validate-message @fields)
+                      (do (reset! errors nil)
+                          (rf/dispatch [:send-message @fields]))
+                      (reset! errors (validate-message @fields)))
+          :value "comment"}]]])))
+
 (defn home-page []
   [:div.container
    [:div.row>div.col-sm-12
     [:h2.alert.alert-info "Tip: try pressing CTRL+H to open re-frame tracing menu"]]
-   (when-let [docs @(rf/subscribe [:docs])]
+   [:div.row>div.col-sm-12
+    (when @(rf/subscribe [:show-twirly])
+      [:span.fa.fa-spinner.spinning])]
+   (when-let [messages @(rf/subscribe [:messages])]
      [:div.row>div.col-sm-12
-      [:div {:dangerouslySetInnerHTML
-             {:__html (md->html docs)}}]])])
+      [:ul.content
+       (for [{:keys [message/id message/timestamp message/message message/name] :as msg} messages]
+         ^{:key (or id message)}
+         [:li
+          (when timestamp
+            [:time (.toLocaleString (js/Date. timestamp))])
+          [:p message]
+          [:p " - " name]])]])
+   [:div.row>div.col-sm-12
+    [message-form]]])
 
 (def pages
   {:home #'home-page
@@ -78,9 +123,6 @@
 
 ;; -------------------------
 ;; Initialize app
-(defn fetch-docs! []
-  (GET "/docs" {:handler #(rf/dispatch [:set-docs %])}))
-
 (defn mount-components []
   (rf/clear-subscription-cache!)
   (r/render [#'page] (.getElementById js/document "app")))
@@ -88,6 +130,6 @@
 (defn init! []
   (rf/dispatch-sync [:navigate :home])
   (load-interceptors!)
-  (fetch-docs!)
+  (rf/dispatch [:fetch-messages])
   (hook-browser-navigation!)
   (mount-components))
