@@ -18,7 +18,7 @@
 (deftest test-message
   (jdbc/with-db-transaction [t-conn *db*]
     (jdbc/db-set-rollback-only! t-conn)
-    (let [timestamp (org.joda.time.DateTime. org.joda.time.DateTimeZone/UTC)]
+    (let [timestamp (java.time.LocalDateTime/now)]
       (is (= 1 (db/save-message!
                 t-conn
                 {:name "Bob"
