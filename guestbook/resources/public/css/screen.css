@@ -1,44 +1,38 @@
 html,
 body {
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  height: 100%;
-  line-height: 1.4em;
-	background: #eaeaea;
-	width: 520px;
-	margin: 0 auto;
 }
-.navbar {
-  margin-bottom: 10px;
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(/assets/material-icons/iconfont/MaterialIcons-Regular.eot); /* For IE6-8 */
+  src: local('Material Icons'),
+       local('MaterialIcons-Regular'),
+       url(/assets/material-icons/iconfont/MaterialIcons-Regular.woff2) format('woff2'),
+       url(/assets/material-icons/iconfont/MaterialIcons-Regular.woff) format('woff'),
+       url(/assets/material-icons/iconfont/MaterialIcons-Regular.ttf) format('truetype');
 }
-.navbar-brand {
-  float: none;
-}
-.navbar-nav .nav-item {
-  float: none;
-}
-.navbar-divider,
-.navbar-nav .nav-item+.nav-item,
-.navbar-nav .nav-link + .nav-link {
-  margin-left: 0;
-}
-@media (min-width: 34em) {
-  .navbar-brand {
-    float: left;
-  }
-  .navbar-nav .nav-item {
-    float: left;
-  }
-  .navbar-divider,
-  .navbar-nav .nav-item+.nav-item,
-  .navbar-nav .nav-link + .nav-link {
-    margin-left: 1rem;
-  }
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.messages {
-  background: white;
-  width: 520px;
-}
 ul {
 	list-style: none;
 }
@@ -63,5 +57,4 @@ form, .error {
 	padding: 30px;
 	margin-bottom: 50px;
 	position: relative;
-  background: white;
 }

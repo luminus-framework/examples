@@ -5,7 +5,6 @@
             [clojure.tools.logging :as log]
             [guestbook.layout :refer [error-page]]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
-            [ring.middleware.webjars :refer [wrap-webjars]]
             [guestbook.middleware.formats :as formats]
             [muuntaja.middleware :refer [wrap-format wrap-params]]
             [guestbook.config :refer [env]]
@@ -43,7 +42,6 @@
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
-      wrap-webjars
       wrap-flash
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults

@@ -1,10 +1,11 @@
 (ns guestbook.routes.home
-  (:require [guestbook.layout :as layout]
-            [guestbook.db.core :as db]
-            [compojure.core :refer [defroutes GET POST]]
-            [ring.util.http-response :as response]
-            [clojure.java.io :as io]
-            [struct.core :as st]))
+  (:require
+   [guestbook.layout :as layout]
+   [guestbook.db.core :as db]
+   [clojure.java.io :as io]
+   [guestbook.middleware :as middleware]
+   [ring.util.http-response :as response]
+   [struct.core :as st]))
 
 (def message-schema
   [[:name
@@ -29,16 +30,20 @@
        (assoc params :timestamp (java.util.Date.)))
       (response/found "/"))))
 
-(defn home-page [{:keys [flash]}]
+(defn home-page [{:keys [flash] :as request}]
   (layout/render
+   request
    "home.html"
    (merge {:messages (db/get-messages)}
           (select-keys flash [:name :message :errors]))))
 
-(defn about-page []
-  (layout/render "about.html"))
+(defn about-page [request]
+  (layout/render request "about.html"))
 
-(defroutes home-routes
-  (GET "/" request (home-page request))
-  (POST "/" request (save-message! request))
-  (GET "/about" [] (about-page)))
+(defn home-routes []
+  [""
+   {:middleware [middleware/wrap-csrf
+                 middleware/wrap-formats]}
+   ["/" {:get home-page
+         :post save-message!}]
+   ["/about" {:get about-page}]])

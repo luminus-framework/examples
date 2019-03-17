@@ -1,19 +1,20 @@
 (ns guestbook.test.db.core
-  (:require [guestbook.db.core :refer [*db*] :as db]
-            [luminus-migrations.core :as migrations]
-            [clojure.test :refer :all]
-            [clojure.java.jdbc :as jdbc]
-            [guestbook.config :refer [env]]
-            [mount.core :as mount]))
+  (:require
+   [guestbook.db.core :refer [*db*] :as db]
+   [luminus-migrations.core :as migrations]
+   [clojure.test :refer :all]
+   [clojure.java.jdbc :as jdbc]
+   [guestbook.config :refer [env]]
+   [mount.core :as mount]))
 
-(use-fixtures
-  :once
-  (fn [f]
-    (mount/start
-      #'guestbook.config/env
-      #'guestbook.db.core/*db*)
-    (migrations/migrate ["migrate"] (select-keys env [:database-url]))
-    (f)))
+ (use-fixtures
+   :once
+   (fn [f]
+     (mount/start
+       #'guestbook.config/env
+       #'guestbook.db.core/*db*)
+     (migrations/migrate ["migrate"] (select-keys env [:database-url]))
+     (f)))
 
 (deftest test-message
   (jdbc/with-db-transaction [t-conn *db*]
