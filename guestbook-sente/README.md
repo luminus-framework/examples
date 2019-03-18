@@ -1,14 +1,21 @@
-## Usage
+# guestbook
 
-Run the migrations for the project:
+generated using Luminus version "3.10.40"
 
-    lein run migrate
+FIXME
 
-Compile ClojureScript
+## Prerequisites
 
-    lein cljsbuild once
+You will need [Leiningen][1] 2.0 or above installed.
 
-Start the server
+[1]: https://github.com/technomancy/leiningen
 
-    lein run
+## Running
 
+To start a web server for the application, run:
+
+    lein run 
+
+## License
+
+Copyright © 2019 FIXME

@@ -1,16 +1,8 @@
-;---
-; Excerpted from "Web Development with Clojure, Second Edition",
-; published by The Pragmatic Bookshelf.
-; Copyrights apply to this code. It may not be used to create training material,
-; courses, books, articles, and the like. Contact us if you are in doubt.
-; We make no guarantees that this code is fit for any purpose.
-; Visit http://www.pragmaticprogrammer.com/titles/dswdcloj2 for more book information.
-;---
 (ns guestbook.ws
   (:require [taoensso.sente :as sente]))
 
-(let [connection (sente/make-channel-socket! "/ws" {:type :auto})]
-  (def ch-chsk (:ch-recv connection))    ; ChannelSocket's receive channel
+(let [connection (sente/make-channel-socket! "/ws" js/csrfToken {:type :auto})]
+  (def ch-chsk (:ch-recv connection)) ; ChannelSocket's receive channel
   (def send-message! (:send-fn connection)))
 
 (defn state-handler [{:keys [?data]}]

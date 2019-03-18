@@ -1,25 +1,33 @@
-;---
-; Excerpted from "Web Development with Clojure, Second Edition",
-; published by The Pragmatic Bookshelf.
-; Copyrights apply to this code. It may not be used to create training material,
-; courses, books, articles, and the like. Contact us if you are in doubt.
-; We make no guarantees that this code is fit for any purpose.
-; Visit http://www.pragmaticprogrammer.com/titles/dswdcloj2 for more book information.
-;---
 (ns guestbook.handler
-  (:require [compojure.core :refer [routes wrap-routes]]
-            [guestbook.layout :refer [error-page]]
-            [guestbook.routes.home :refer [home-routes]]
-            [guestbook.routes.ws :refer [websocket-routes]]
-            [compojure.route :as route]
-            [guestbook.middleware :as middleware]))
+  (:require
+    [guestbook.middleware :as middleware]
+    [guestbook.layout :refer [error-page]]
+    [guestbook.routes.home :refer [home-routes]]
+    [reitit.ring :as ring]
+    [ring.middleware.content-type :refer [wrap-content-type]]
+    [ring.middleware.webjars :refer [wrap-webjars]]
+    [guestbook.env :refer [defaults]]
+    [mount.core :as mount]))
 
-(def app-routes
-  (routes
-    #'websocket-routes
-    (wrap-routes #'home-routes middleware/wrap-csrf)
-    (route/not-found
-      (:body
-        (error-page {:status 404
-                     :title "page not found"})))))
-(def app (middleware/wrap-base #'app-routes))
+(mount/defstate init-app
+  :start ((or (:init defaults) identity))
+  :stop  ((or (:stop defaults) identity)))
+
+(mount/defstate app
+  :start
+  (middleware/wrap-base
+    (ring/ring-handler
+      (ring/router
+       [(home-routes)])
+      (ring/routes
+        (ring/create-resource-handler
+          {:path "/"})
+        (wrap-content-type
+          (wrap-webjars (constantly nil)))
+        (ring/create-default-handler
+          {:not-found
+           (constantly (error-page {:status 404, :title "404 - Page not found"}))
+           :method-not-allowed
+           (constantly (error-page {:status 405, :title "405 - Not allowed"}))
+           :not-acceptable
+           (constantly (error-page {:status 406, :title "406 - Not acceptable"}))})))))

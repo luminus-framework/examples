@@ -1,15 +1,21 @@
-;---
-; Excerpted from "Web Development with Clojure, Second Edition",
-; published by The Pragmatic Bookshelf.
-; Copyrights apply to this code. It may not be used to create training material,
-; courses, books, articles, and the like. Contact us if you are in doubt.
-; We make no guarantees that this code is fit for any purpose.
-; Visit http://www.pragmaticprogrammer.com/titles/dswdcloj2 for more book information.
-;---
 (ns guestbook.test.handler
-  (:require [clojure.test :refer :all]
-            [ring.mock.request :refer :all]
-            [guestbook.handler :refer :all]))
+  (:require
+    [clojure.test :refer :all]
+    [ring.mock.request :refer :all]
+    [guestbook.handler :refer :all]
+    [guestbook.middleware.formats :as formats]
+    [muuntaja.core :as m]
+    [mount.core :as mount]))
+
+(defn parse-json [body]
+  (m/decode formats/instance "application/json" body))
+
+(use-fixtures
+  :once
+  (fn [f]
+    (mount/start #'guestbook.config/env
+                 #'guestbook.handler/app)
+    (f)))
 
 (deftest test-app
   (testing "main route"

@@ -1,36 +1,26 @@
-;---
-; Excerpted from "Web Development with Clojure, Second Edition",
-; published by The Pragmatic Bookshelf.
-; Copyrights apply to this code. It may not be used to create training material,
-; courses, books, articles, and the like. Contact us if you are in doubt.
-; We make no guarantees that this code is fit for any purpose.
-; Visit http://www.pragmaticprogrammer.com/titles/dswdcloj2 for more book information.
-;---
 (ns guestbook.layout
-  (:require [selmer.parser :as parser]
-            [selmer.filters :as filters]
-            [markdown.core :refer [md-to-html-string]]
-            [ring.util.http-response :refer [content-type ok]]
-            [ring.util.anti-forgery :refer [anti-forgery-field]]
-            [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
+  (:require
+    [selmer.parser :as parser]
+    [selmer.filters :as filters]
+    [markdown.core :refer [md-to-html-string]]
+    [ring.util.http-response :refer [content-type ok]]
+    [ring.util.anti-forgery :refer [anti-forgery-field]]
+    [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
 
-
-(declare ^:dynamic *app-context*)
-(parser/set-resource-path!  (clojure.java.io/resource "templates"))
+(parser/set-resource-path!  (clojure.java.io/resource "html"))
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 (filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
 
 (defn render
-  "renders the HTML template located relative to resources/templates"
-  [template & [params]]
+  "renders the HTML template located relative to resources/html"
+  [request template & [params]]
   (content-type
     (ok
       (parser/render-file
         template
         (assoc params
           :page template
-          :csrf-token *anti-forgery-token*
-          :servlet-context *app-context*)))
+          :csrf-token *anti-forgery-token*)))
     "text/html; charset=utf-8"))
 
 (defn error-page
