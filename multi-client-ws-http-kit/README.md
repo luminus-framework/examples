@@ -1,4 +1,6 @@
-# multi-client-ws
+# multi-client-ws-http-kit
+
+generated using Luminus version "3.44"
 
 FIXME
 
@@ -12,12 +14,8 @@ You will need [Leiningen][1] 2.0 or above installed.
 
 To start a web server for the application, run:
 
-    lein run
-
-To start the ClojureScript compiler run:
-   
-    lein figwheel
+    lein run 
 
 ## License
 
-Copyright © 2015 Dmitri Sotnikov
+Copyright © 2019 FIXME

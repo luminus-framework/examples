@@ -1,98 +1,127 @@
-(defproject multi-client-ws "0.1.0-SNAPSHOT"
+(defproject multi-client-ws-http-kit "0.1.0-SNAPSHOT"
 
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
 
-  :dependencies [[org.clojure/clojure "1.7.0-RC1"]
-                 [selmer "0.8.2"]
-                 [com.taoensso/timbre "3.4.0"]
-                 [com.taoensso/tower "3.0.2"]
-                 [markdown-clj "0.9.66"]
-                 [environ "1.0.0"]
-                 [compojure "1.3.4"]
-                 [ring/ring-defaults "0.1.5"]
-                 [ring/ring-session-timeout "0.1.0"]
-                 [metosin/ring-middleware-format "0.6.0"]
-                 [metosin/ring-http-response "0.6.2"]
-                 [bouncer "0.3.2"]
-                 [prone "0.8.2"]
-                 [org.clojure/tools.nrepl "0.2.10"]
-                 
-                 [org.clojure/clojurescript "0.0-3291" :scope "provided"]
-                 [org.clojure/tools.reader "0.9.2"]
-                 [reagent "0.5.0"]
-                 [cljsjs/react "0.13.3-0"]
-                 [reagent-forms "0.5.1"]
-                 [reagent-utils "0.1.4"]
-                 [secretary "1.2.3"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [cljs-ajax "0.3.11"]
-                 [http-kit "2.1.19"]]
+  :dependencies [[ch.qos.logback/logback-classic "1.2.3"]
+                 [cheshire "5.8.1"]
+                 [cljs-ajax "0.8.0"]
+                 [clojure.java-time "0.3.2"]
+                 [com.cognitect/transit-clj "0.8.313"]
+                 [cprop "0.1.14"]
+                 [funcool/struct "1.4.0"]
+                 [luminus-http-kit "0.1.6"]
+                 [luminus-transit "0.1.1"]
+                 [luminus/ring-ttl-session "0.3.3"]
+                 [markdown-clj "1.10.0"]
+                 [metosin/muuntaja "0.6.4"]
+                 [metosin/reitit "0.3.9"]
+                 [metosin/ring-http-response "0.9.1"]
+                 [mount "0.1.16"]
+                 [nrepl "0.6.0"]
+                 [org.clojure/clojure "1.10.1"]
+                 [org.clojure/clojurescript "1.10.520" :scope "provided"]
+                 [org.clojure/tools.cli "0.4.2"]
+                 [org.clojure/tools.logging "0.4.1"]
+                 [org.webjars.npm/bulma "0.7.5"]
+                 [org.webjars.npm/material-icons "0.3.0"]
+                 [org.webjars/webjars-locator "0.36"]
+                 [reagent "0.8.1"]
+                 [ring-webjars "0.2.0"]
+                 [ring/ring-core "1.7.1"]
+                 [ring/ring-defaults "0.3.2"]
+                 [selmer "1.12.12"]]
 
   :min-lein-version "2.0.0"
-  :uberjar-name "multi-client-ws.jar"
-  :jvm-opts ["-server"]
+  
+  :source-paths ["src/clj" "src/cljs" "src/cljc"]
+  :test-paths ["test/clj"]
+  :resource-paths ["resources" "target/cljsbuild"]
+  :target-path "target/%s/"
+  :main ^:skip-aot multi-client-ws-http-kit.core
 
-;;enable to start the nREPL server when the application launches
-;:env {:repl-port 7001}
-
-  :main multi-client-ws.core
-
-  :plugins [
-            [lein-environ "1.0.0"]
-            [lein-ancient "0.6.5"]
-            [lein-cljsbuild "1.0.6"]]
+  :plugins [[lein-cljsbuild "1.1.7"]]
+  :clean-targets ^{:protect false}
+  [:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
+  :figwheel
+  {:http-server-root "public"
+   :server-logfile "log/figwheel-logfile.log"
+   :nrepl-port 7002
+   :css-dirs ["resources/public/css"]
+   :nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
   
 
-  
-  
-  :clean-targets ^{:protect false} ["resources/public/js"]
-  
-  :cljsbuild
-  {:builds
-   {:app
-    {:source-paths ["src-cljs"]
-     :compiler
-     {:output-dir "resources/public/js/out"
-      :externs ["react/externs/react.js"]
-      :optimizations :none
-      :output-to "resources/public/js/app.js"
-      :pretty-print true}}}}
-  
-  
   :profiles
   {:uberjar {:omit-source true
-             :env {:production true}
-              :hooks [leiningen.cljsbuild]
-              :cljsbuild
-              {:jar true
-               :builds
-               {:app
-                {:source-paths ["env/prod/cljs"]
-                 :compiler {:optimizations :advanced :pretty-print false}}}} 
+             :prep-tasks ["compile" ["cljsbuild" "once" "min"]]
+             :cljsbuild{:builds
+              {:min
+               {:source-paths ["src/cljc" "src/cljs" "env/prod/cljs"]
+                :compiler
+                {:output-dir "target/cljsbuild/public/js"
+                 :output-to "target/cljsbuild/public/js/app.js"
+                 :source-map "target/cljsbuild/public/js/app.js.map"
+                 :optimizations :advanced
+                 :pretty-print false
+                 :infer-externs true
+                 :closure-warnings
+                 {:externs-validation :off :non-standard-jsdoc :off}
+                 :externs ["react/externs/react.js"]}}}}
              
-             :aot :all}
-   :dev {:dependencies [[ring-mock "0.1.5"]
-                        [ring/ring-devel "1.3.2"]
-                        [pjstadig/humane-test-output "0.7.0"]
-                        [weasel "0.6.0"]
-                        [lein-figwheel "0.3.3"]
-                        [org.clojure/tools.nrepl "0.2.10"]
-                        [com.cemerick/piggieback "0.2.1"]]
-         :source-paths ["env/dev/clj"]
-         :plugins [[lein-figwheel "0.3.3"]]
-          :cljsbuild
-          {:builds
-           {:app
-            {:source-paths ["env/dev/cljs"] :compiler {:source-map true}}}} 
-         
-         :figwheel
-         {:http-server-root "public"
-          :server-port 3449
-          :css-dirs ["resources/public/css"]
-          :ring-handler multi-client-ws.handler/app}
-         
-         :repl-options {:init-ns multi-client-ws.core}
-         :injections [(require 'pjstadig.humane-test-output)
-                      (pjstadig.humane-test-output/activate!)]
-         :env {:dev true}}})
+             :aot :all
+             :uberjar-name "multi-client-ws-http-kit.jar"
+             :source-paths ["env/prod/clj"]
+             :resource-paths ["env/prod/resources"]}
+
+   :dev           [:project/dev :profiles/dev]
+   :test          [:project/dev :project/test :profiles/test]
+
+   :project/dev  {:jvm-opts ["-Dconf=dev-config.edn" #_#_"--add-modules" "java.xml.bind"]
+                  :dependencies [[binaryage/devtools "0.9.10"]
+                                 [cider/piggieback "0.4.1"]
+                                 [doo "0.1.11"]
+                                 [expound "0.7.2"]
+                                 [figwheel-sidecar "0.5.19"]
+                                 [pjstadig/humane-test-output "0.9.0"]
+                                 [prone "2019-07-08"]
+                                 [ring/ring-devel "1.7.1"]
+                                 [ring/ring-mock "0.4.0"]]
+                  :plugins      [[com.jakemccrary/lein-test-refresh "0.24.1"]
+                                 [lein-doo "0.1.11"]
+                                 [lein-figwheel "0.5.19"]]
+                  :cljsbuild{:builds
+                   {:app
+                    {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
+                     :figwheel
+                     {:on-jsload "multi-client-ws-http-kit.core/mount-components"}
+                     :compiler
+                     {:main "multi-client-ws-http-kit.app"
+                      :asset-path "/js/out"
+                      :output-to "target/cljsbuild/public/js/app.js"
+                      :output-dir "target/cljsbuild/public/js/out"
+                      :source-map true
+                      :optimizations :none
+                      :pretty-print true}}}}
+                  
+                  
+                  :doo {:build "test"}
+                  :source-paths ["env/dev/clj"]
+                  :resource-paths ["env/dev/resources"]
+                  :repl-options {:init-ns user}
+                  :injections [(require 'pjstadig.humane-test-output)
+                               (pjstadig.humane-test-output/activate!)]}
+   :project/test {:jvm-opts ["-Dconf=test-config.edn"]
+                  :resource-paths ["env/test/resources"]
+                  :cljsbuild 
+                  {:builds
+                   {:test
+                    {:source-paths ["src/cljc" "src/cljs" "test/cljs"]
+                     :compiler
+                     {:output-to "target/test.js"
+                      :main "multi-client-ws-http-kit.doo-runner"
+                      :optimizations :whitespace
+                      :pretty-print true}}}}
+                  
+                  }
+   :profiles/dev {}
+   :profiles/test {}})
