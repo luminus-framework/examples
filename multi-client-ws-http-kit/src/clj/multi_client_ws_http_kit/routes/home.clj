@@ -24,7 +24,7 @@
   (with-channel request channel
     (connect! channel)
     (on-close channel (partial disconnect! channel))
-    (on-receive channel #(notify-clients %))))
+    (on-receive channel notify-clients)))
 
 (defn home-page [request]
   (layout/render request "home.html"))

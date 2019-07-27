@@ -1,8 +1,0 @@
-(ns multi-client-ws.core-test
-  (:require [cljs.test :refer-macros [is are deftest testing use-fixtures]]
-            [reagent.core :as reagent :refer [atom]]
-            [multi-client-ws.core :as rc]))
-
-(deftest test-home
-  (is (= true true)))
-

@@ -1,17 +1,15 @@
-(ns multi-client-ws-http-kit.core
+(ns multi-client-ws-immutant.core
   (:require
-   [multi-client-ws.websockets :as ws]
-   [reagent.core :as r]))
+    [reagent.core :as r]
+    [multi-client-ws.websockets :as ws]))
 
 (defonce messages (r/atom []))
 
 (defn message-list []
   [:ul
-   (map-indexed
-    (fn [id message]
-      ^{:key id}
-      [:li message])
-    @messages)])
+   (for [[i message] (map-indexed vector @messages)]
+     ^{:key i}
+     [:li message])])
 
 (defn message-input []
   (r/with-let [value (r/atom nil)]
@@ -31,12 +29,12 @@
    [:hr]
    [message-input]])
 
-(defn update-messages! [{:keys [message]}]
-  (swap! messages #(vec (take 10 (conj % message)))))
-
 (defn mount-components []
   (r/render [#'home-page] (.getElementById js/document "app")))
 
+(defn update-messages! [{:keys [message]}]
+  (swap! messages #(vec (take 10 (conj % message)))))
+
 (defn init! []
-  (ws/make-websocket! (str "ws://" (.-host js/location) "/ws") update-messages!)
+  (ws/make-websocket! (str "ws://" (.-host js/location) "/ws") update-messages!)  
   (mount-components))

@@ -1,8 +1,7 @@
-FROM java:8-alpine
-MAINTAINER Your Name <you@example.com>
+FROM openjdk:8-alpine
 
-ADD target/uberjar/multi-client-ws.jar /multi-client-ws/app.jar
+COPY target/uberjar/multi-client-ws-immutant.jar /multi-client-ws-immutant/app.jar
 
 EXPOSE 3000
 
-CMD ["java", "-jar", "/multi-client-ws/app.jar"]
+CMD ["java", "-jar", "/multi-client-ws-immutant/app.jar"]
