@@ -18,7 +18,7 @@
 
 (defn disconnect! [channel status]
   (log/info "channel closed:" status)
-  (swap! channels #(remove #{channel} %)))
+  (swap! channels disj channel))
 
 (defn ws-handler [request]
   (with-channel request channel
