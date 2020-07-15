@@ -1,6 +1,6 @@
 # guestbook
 
-generated using Luminus version "3.10.40"
+generated using Luminus version "3.77"
 
 FIXME
 
@@ -18,4 +18,4 @@ To start a web server for the application, run:
 
 ## License
 
-Copyright © 2019 FIXME
+Copyright © 2020 FIXME

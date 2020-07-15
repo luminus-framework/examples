@@ -1,8 +1,8 @@
 (ns guestbook.db.core
   (:require
-    [clojure.java.jdbc :as jdbc]
+    [next.jdbc.date-time]
+    [next.jdbc.result-set]
     [conman.core :as conman]
-    [java-time.pre-java8 :as jt]
     [mount.core :refer [defstate]]
     [guestbook.config :refer [env]]))
 
@@ -12,32 +12,19 @@
 
 (conman/bind-connection *db* "sql/queries.sql")
 
-
-(extend-protocol jdbc/IResultSetReadColumn
+(extend-protocol next.jdbc.result-set/ReadableColumn
   java.sql.Timestamp
-  (result-set-read-column [v _2 _3]
+  (read-column-by-label [^java.sql.Timestamp v _]
+    (.toLocalDateTime v))
+  (read-column-by-index [^java.sql.Timestamp v _2 _3]
     (.toLocalDateTime v))
   java.sql.Date
-  (result-set-read-column [v _2 _3]
+  (read-column-by-label [^java.sql.Date v _]
+    (.toLocalDate v))
+  (read-column-by-index [^java.sql.Date v _2 _3]
     (.toLocalDate v))
   java.sql.Time
-  (result-set-read-column [v _2 _3]
+  (read-column-by-label [^java.sql.Time v _]
+    (.toLocalTime v))
+  (read-column-by-index [^java.sql.Time v _2 _3]
     (.toLocalTime v)))
-
-(extend-protocol jdbc/ISQLValue
-  java.util.Date
-  (sql-value [v]
-    (java.sql.Timestamp. (.getTime v)))
-  java.time.LocalTime
-  (sql-value [v]
-    (jt/sql-time v))
-  java.time.LocalDate
-  (sql-value [v]
-    (jt/sql-date v))
-  java.time.LocalDateTime
-  (sql-value [v]
-    (jt/sql-timestamp v))
-  java.time.ZonedDateTime
-  (sql-value [v]
-    (jt/sql-timestamp v)))
-

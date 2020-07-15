@@ -24,8 +24,9 @@ The `home-page` function will in turn call the `guestbook.layout/render` functio
 to render the HTML content:
 
 ```
-(defn home-page [_]
+(defn home-page [request]
   (layout/render
+    request 
     "home.html" {:docs (-> "docs/docs.md" io/resource slurp)}))
 ```
 

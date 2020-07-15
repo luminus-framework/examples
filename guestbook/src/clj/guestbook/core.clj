@@ -1,13 +1,22 @@
 (ns guestbook.core
-  (:require [guestbook.handler :as handler]
-            [guestbook.nrepl :as nrepl]
-            [luminus.http-server :as http]
-            [luminus-migrations.core :as migrations]
-            [guestbook.config :refer [env]]
-            [clojure.tools.cli :refer [parse-opts]]
-            [clojure.tools.logging :as log]
-            [mount.core :as mount])
+  (:require
+    [guestbook.handler :as handler]
+    [guestbook.nrepl :as nrepl]
+    [luminus.http-server :as http]
+    [luminus-migrations.core :as migrations]
+    [guestbook.config :refer [env]]
+    [clojure.tools.cli :refer [parse-opts]]
+    [clojure.tools.logging :as log]
+    [mount.core :as mount])
   (:gen-class))
+
+;; log uncaught exceptions in threads
+(Thread/setDefaultUncaughtExceptionHandler
+  (reify Thread$UncaughtExceptionHandler
+    (uncaughtException [_ thread ex]
+      (log/error {:what :uncaught-exception
+                  :exception ex
+                  :where (str "Uncaught exception on" (.getName thread))}))))
 
 (def cli-options
   [["-p" "--port PORT" "Port number"
@@ -17,8 +26,8 @@
   :start
   (http/start
     (-> env
-        (assoc  :handler #'handler/app)
-        (update :io-threads #(or % (* 2 (.availableProcessors (Runtime/getRuntime)))))
+        (update :io-threads #(or % (* 2 (.availableProcessors (Runtime/getRuntime))))) 
+        (assoc  :handler (handler/app))
         (update :port #(or (-> env :options :port) %))))
   :stop
   (http/stop http-server))

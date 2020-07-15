@@ -1,18 +1,18 @@
 (ns guestbook.middleware
-  (:require [guestbook.env :refer [defaults]]
-            [cheshire.generate :as cheshire]
-            [cognitect.transit :as transit]
-            [clojure.tools.logging :as log]
-            [guestbook.layout :refer [error-page]]
-            [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
-            [guestbook.middleware.formats :as formats]
-            [muuntaja.middleware :refer [wrap-format wrap-params]]
-            [guestbook.config :refer [env]]
-            [ring.middleware.flash :refer [wrap-flash]]
-            [immutant.web.middleware :refer [wrap-session]]
-            [ring.middleware.defaults :refer [site-defaults wrap-defaults]])
-  (:import 
-           ))
+  (:require
+    [guestbook.env :refer [defaults]]
+    [cheshire.generate :as cheshire]
+    [cognitect.transit :as transit]
+    [clojure.tools.logging :as log]
+    [guestbook.layout :refer [error-page]]
+    [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
+    [guestbook.middleware.formats :as formats]
+    [muuntaja.middleware :refer [wrap-format wrap-params]]
+    [guestbook.config :refer [env]]
+    [ring.middleware.flash :refer [wrap-flash]]
+    [immutant.web.middleware :refer [wrap-session]]
+    [ring.middleware.defaults :refer [site-defaults wrap-defaults]])
+  )
 
 (defn wrap-internal-error [handler]
   (fn [req]

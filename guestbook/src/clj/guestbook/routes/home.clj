@@ -4,6 +4,7 @@
    [guestbook.db.core :as db]
    [clojure.java.io :as io]
    [guestbook.middleware :as middleware]
+   [ring.util.response]
    [ring.util.http-response :as response]
    [struct.core :as st]))
 
@@ -37,6 +38,8 @@
    (merge {:messages (db/get-messages)}
           (select-keys flash [:name :message :errors]))))
 
+
+
 (defn about-page [request]
   (layout/render request "about.html"))
 
@@ -47,3 +50,4 @@
    ["/" {:get home-page
          :post save-message!}]
    ["/about" {:get about-page}]])
+
