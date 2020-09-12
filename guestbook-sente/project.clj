@@ -17,7 +17,7 @@
                  [luminus/ring-ttl-session "0.3.2"]
                  [markdown-clj "1.0.7"]
                  [metosin/muuntaja "0.6.3"]
-                 [metosin/reitit "0.3.0"]
+                 [metosin/reitit "0.3.7"]
                  [metosin/ring-http-response "0.9.1"]
                  [mount "0.1.16"]
                  [nrepl "0.6.0"]
